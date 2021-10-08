@@ -1,0 +1,75 @@
+package com.dao;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.model.LoginModel;
+import com.model.RegistrationModel;
+
+
+@Repository
+public class DaoImpl implements Dao
+{
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	@Override
+	public void save(RegistrationModel saveelements)
+	{
+		// TODO Auto-generated method stub
+		sessionFactory.getCurrentSession().save(saveelements);
+	}
+
+	@Override
+	public List<RegistrationModel> dologin(LoginModel log) 
+	{
+		// TODO Auto-generated method stub
+		Query q = sessionFactory.getCurrentSession().createQuery("from RegistrationModel where email='"+log.getUname()+"'and password='"+log.getPassword()+"'");
+		List <RegistrationModel> list = q.list();
+		return list.size()>0 ? list:null;	
+	}
+
+	@Override
+	public List<RegistrationModel> getAllUsers()
+	{
+			List<RegistrationModel> list = sessionFactory.getCurrentSession().createQuery("from RegistrationModel").list();
+			return list;
+	}
+
+	@Override
+	public void delete(int id) {
+		// TODO Auto-generated method stub
+		Query q =  sessionFactory.getCurrentSession().createQuery("delete from RegistrationModel where id='"+id+"'");		
+		q.executeUpdate();
+	}
+
+	@Override
+	public RegistrationModel getDetails(int id)
+	{
+		RegistrationModel reg= new RegistrationModel();
+		Query q = sessionFactory.getCurrentSession().createQuery("from RegistrationModel where id='"+id+"'");
+		List<RegistrationModel> list = q.list();
+		for(RegistrationModel r:list)
+		{
+			reg.setId(r.getId());
+			reg.setUname(r.getUname());
+			reg.setEmail(r.getEmail());
+			reg.setPhone(r.getPhone());
+			reg.setType(r.getType());
+			reg.setPassword(r.getPassword());
+		}
+		return reg;
+	}
+
+	@Override
+	public void update(RegistrationModel details) {
+		// TODO Auto-generated method stub
+		System.out.println("yaha tak aa raha hai kya bros");
+		sessionFactory.getCurrentSession().update(details);
+		//q.executeUpdate();
+	}
+}
